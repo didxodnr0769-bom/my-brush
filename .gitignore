@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+build/
+dist/
+*.spec
+*.log
+
+# Local activity analysis and raw diagnostic output
+docs/analysis/screenbrush-usage-patterns.md
+docs/analysis/evidence/screenbrush-usage-evidence.json
+output/native/*.txt
+output/native/*.jsonl

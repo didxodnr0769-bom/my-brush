@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-15",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "architecture": "arm64",
+  "python": "3.12.14",
+  "artifact": "dist/MyBrush.app",
+  "binary_sha256": "5b512d1d8b0b99227641ded84cbd942f53046594e4b519af3130b04ba394fe40",
+  "unit_tests": {
+    "total": 54,
+    "model": 20,
+    "qt_widgets": 34,
+    "passed": 54,
+    "mode": "QT_QPA_PLATFORM=offscreen"
+  },
+  "macos_native": {
+    "bundle_launched": true,
+    "signature_verification": "pass (ad hoc local build)",
+    "ui_observed": [
+      "pen drawing",
+      "palette color",
+      "stroke width",
+      "rectangle via pointer",
+      "multiline Korean paste",
+      "existing text resize",
+      "Control+Enter",
+      "shortcut duplicate error and save",
+      "new shortcut dispatch",
+      "hide overlay"
+    ],
+    "hotkey_registration_and_collision": "pass",
+    "own_process_carbon_to_qt_delivery": "pass",
+    "physical_control_drag": "not verified",
+    "physical_global_hotkey_from_other_app": "pass (user confirmed on macOS, 2026-10-15)",
+    "real_ime": "not verified",
+    "toggle": {
+      "binding": "Control+Command+Tab",
+      "preference_saved": true,
+      "off_persists_across_activation": "pass (Qt regression)",
+      "bundled_ui_binding_and_off_button": "observed",
+      "running_app_registration": "confirmed by exclusive collision",
+      "physical_keyboard_round_trip": "pass (user confirmed ON then OFF from another app, 2026-10-15)"
+    }
+  },
+  "windows": {
+    "source_and_scripts": true,
+    "binary_built": false,
+    "runtime_verified": false
+  },
+  "source_sha256": {
+    "desktop_main.py": "c4311322e3841ee2438678f7f145c568443d2c1ae1112672b8f93906a034121a",
+    "my_brush/__init__.py": "16a4c90fd2758d91d80a7b595d432e463aff48ada4e2a637701714b40bf1bccf",
+    "my_brush/app.py": "987aa983d8fc2ffe12e0164f267b55f7078d777545ba615f92b8578cbc842425",
+    "my_brush/model.py": "c6a2c68a09ac73d12671a6dae450eae4e5df2da2f04a97963ac9809284b1e2dc",
+    "my_brush/platform.py": "05cf242701c95f8bebe7b097ffd56c137196f2c18bf9d9d420e3a8527431fc1d",
+    "my_brush/preferences.py": "a54e1be9d4780fa67285c8d071977f71b69632fc1ef309048fea00a865d06b9c",
+    "scripts/build.py": "c88199375a00888d06fd3f7469360d1153f94a0d2f2541d69102628e35cdfc51",
+    "requirements.txt": "e16dff7f823f0121441ae1e78e9b50b706a2635dfbbe7244e03d4395a11c067c",
+    "requirements-build.txt": "e1ffd8537aef74381c9cec6c739efe57275c0e859058932fa910975fab9088b3"
+  }
+}

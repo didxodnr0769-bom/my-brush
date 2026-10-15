@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-15",
+  "target": "com.imagestudiopro.ScreenBrush",
+  "evidence_type": "CUA native AX and screenshot observation",
+  "observed_toolbar": [
+    "Brush",
+    "Arrow",
+    "Rectangle",
+    "Text",
+    "CloseToolbar",
+    "Rainbow",
+    "ColorWheel",
+    "Thickness",
+    "Options",
+    "FreezeMode",
+    "Undo",
+    "Repeat",
+    "Scissors",
+    "Hand",
+    "Flashlight"
+  ],
+  "observed_navigation": [
+    "ScreenBrush Plus",
+    "Remote",
+    "Shortcuts",
+    "Settings",
+    "Feedback",
+    "About ScreenBrush",
+    "Hide ScreenBrush",
+    "Quit ScreenBrush"
+  ],
+  "observed_actions": [
+    "Options panel expanded",
+    "App menu trees read",
+    "Tool window raised"
+  ],
+  "not_verified": [
+    "Actual drawing/editing/capture/save behavior",
+    "Settings detail view and actual shortcut values",
+    "Windows behavior"
+  ],
+  "interaction_limit": "Settings row selections did not switch the panel; user-change guards appeared during later input. No preference changes or purchases performed."
+}
