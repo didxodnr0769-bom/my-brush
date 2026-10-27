@@ -1,3 +1,121 @@
+# My Brush 데스크톱 구현·검증 기록
+
+## 현재 구현 — Electron (2026-10-27)
+
+사용자 요청으로 Python·Qt 실행·빌드 경로를 Electron으로 전환했다. 기능 범위와 입력 규칙은 기존 요구사항·조작 설계를 유지한다. 진입점은 `electron/main.cjs`, 격리된 preload는 `electron/preload.cjs`, 실제 화면은 `electron/renderer/`다. 이전 `preview/index.html`을 앱에서 로드하지 않는다. Python 앱·Qt 전용 검사·PyInstaller 스크립트와 requirements 파일은 제거했다.
+
+### 환경과 명령
+
+- macOS 26.6.2 (25G83), Apple Silicon arm64.
+- Node.js 24.22.1, Electron 45.0.0, electron-builder 26.18.0, Playwright 1.64.1.
+- 연결된 1920×1080 화면 2개. 각 오버레이의 실제 bounds와 디스플레이 bounds가 일치하고 최상위·표시 상태인 것을 확인했다. 서로 다른 배율·전체 화면 앱·모니터 분리/재연결은 별도 미검증이다.
+
+```sh
+npm ci
+npm test
+npm run test:electron
+npm run test:pointer
+npm run dist
+```
+
+`npm ci`로 잠금 파일 재설치와 Electron 바이너리 설치를 확인했다. GUI 검사는 `MY_BRUSH_USER_DATA` 임시 프로필을 사용하여 사용자 설정을 바꾸지 않고, 검사 후 앱과 임시 프로필을 정리했다. 소스·패키징 앱 실행은 macOS 화면 접근이 가능한 환경에서 수행했다.
+
+### 자동 검사
+
+Node 검사 **69/69 통과**:
+
+| 대상 | 개수 | 검증한 범위 |
+|---|---:|---|
+| 기하·장면 | 21 | 일부 교차 전체 삭제, 둥근 끝·연결부, 빈 사각형 내부 제외, 경계 접촉, 길고 얇은 영역, 복수 삭제·텍스트 상자 |
+| 설정 | 7 | OS별 기본 키, Python 설정 변환, 고정·중복 키 검증, 기존 설정 우선, 원자적 저장 실패 보존 |
+| 전역키 교체 | 7 | 등록 실패·예외·저장 실패 복구, 기존 키 유지, 성공 후 이전 키 해제, 초기 실패 재시도 |
+| renderer 상태 | 6 | 저장 중 다른 화면 설정 보존, 오래된 revision 무시, 연속 입력·실패 복구, 모달·조합 상태 공유, 잠긴 화면 입력 차단 |
+| 포인터 수명주기 | 26 | 지연 release 복구, 다음 down에서 획 분리, 대기 중 hover 제외, Control 해제 순서·명시 취소 유지 |
+| 입력 진단 | 2 | 텍스트·좌표·일반 키 제외, 이벤트 허용목록, 비동기 직렬 저장·32건 제한·파일 권한 |
+
+renderer 상태 검사는 VM DOM·지연 IPC fixture를 사용한다. OS 입력기·전역키·화면 합성 검증을 대신하지 않는다.
+
+### 실제 Electron 창 입력 검사
+
+`npm run test:electron`의 **15개 시나리오 통과**:
+
+- 빈 초기 장면, 화면 크기, 투명 배경 알파, 최상위 창, Node 통합 해제·context isolation·renderer sandbox.
+- 펜, 새 오브젝트에 색상·굵기 적용, 사각형, 빈 사각형 내부 삭제 제외.
+- 여러 줄 한글 텍스트 주입, Control+Enter 확정, 기존 텍스트 크기 변경·편집 취소, 문자 키 입력 보호·외부 클릭 소비.
+- 사각형 테두리 일부 교차 시 전체 삭제, Ctrl 선해제·Escape 취소, 여러 종류의 오브젝트 일괄 삭제.
+- 단축키 중복 오류·기록 취소·변경 저장·새 도구 키 dispatch.
+- 실제 OS에 충돌 키를 선등록한 뒤 변경 거절·기존 키 유지, 사용 가능한 새 전역키 등록·기존 키 해제.
+- 다른 화면에서 설정 모달 보호, 합성 composition 이벤트 중 도구 키·토글 보호.
+- 필기 끄기·메뉴 켜기 후 내용 유지, 일반 활성화 이벤트 뒤 OFF 유지, 드래그 중 숨김 취소.
+- OFF로 재시작한 뒤 저장 설정 복원·장면 비어 있음 확인.
+
+Playwright의 Electron renderer 입력과 실제 OS의 전역키 **등록**을 확인한 결과다. 물리 키 입력으로 다른 앱에서 전역 콜백이 발생하는지, 실제 한글 IME 조합·후보 선택은 확인하지 않았다. 한글 문자열 입력·합성 composition 이벤트를 실제 IME 성공으로 세지 않는다.
+
+초기·필기/텍스트·설정·충돌 오류 화면을 캡처하고 도구 막대·상태 표시·대화상자·오브젝트를 시각 검토했다. 해당 화면에서 잘림·불필요한 페이지 스크롤·겹침을 발견하지 않았다. 캡처는 renderer 투명 레이어이므로 실제 바탕화면 합성의 시각 검증과 구분한다. 로컬 근거는 `output/electron/`에 보관하며 Git에는 포함하지 않는다.
+
+### 0.2.1 — 마우스업 획 소실·Control 삭제 보완
+
+사용자는 **마우스·주 모니터**에서 획이 마우스를 따라오다가 버튼 해제 때 사라지고, Control+드래그도 간헐적으로 실패하며 빠르게 조작할수록 빈도가 늘어난다고 보고했다.
+
+확인된 코드 경로와 수정:
+
+- 확정이 canvas의 `pointerup`에만 있었고, capture loss는 진행 중인 획을 즉시 버렸다. mouse `pointerdown.preventDefault()`는 Chromium의 compatibility `mouseup`도 억제했다. 창 capture 단계에서 release를 처리하고 정상 `mouseup`을 보조 경로로 사용할 수 있도록 했다.
+- capture loss·cancel의 pointerId·시작 시각·현재 캡처 상태를 확인해 다른 포인터와 이전 획의 지연 이벤트를 구분한다. 버튼이 이미 해제된 마우스의 capture loss는 동일 release의 `mouseup`을 한 프레임까지 기다린다. 유효한 release가 없으면 취소하며, capture loss만으로 획을 자동 확정하지 않는다.
+- macOS 삭제 중 Control 상태를 마우스 플래그 하나에만 의존하지 않고 키 눌림/해제를 함께 추적한다. 실제 Control 해제·Escape·blur·숨김은 계속 미완료 작업을 취소한다.
+- 마우스업 보조 경로는 마우스의 시작 버튼만 처리한다. 펜 장치나 다른 버튼의 해제로 임의 확정하지 않는다.
+
+`npm run test:pointer`는 실제 Electron `webContents.sendInputEvent`와 통제된 전달 누락을 사용한다. **소스와 0.2.1 패키징 앱에서 각 3개 검사 통과**:
+
+1. 빠른 100회 그리기 후 100개 유지·Control 영역 삭제 후 0개.
+2. Control 키를 유지한 채 마우스 이벤트의 modifier 플래그가 빠지는 조건에서도 삭제 완료.
+3. `pointerup` handler 전달을 의도적으로 차단한 상태에서 빠른 100회 그리기·삭제 복구. 수정 전 0.2.0 번들은 100개 중 0개 유지, 수정 후 소스·번들은 100개 유지.
+
+이는 이벤트 누락에 대한 복구 검증이며 **사용자의 물리 마우스에서 실제로 어느 이벤트가 누락되었는지까지 재현한 것은 아니다**. 전달 차단이 없는 빠른 100회 자동 입력은 수정 전에도 정상 통과했다. CUA의 현재 앱 접근성 조회는 시간 초과되어 native UI 도구로 물리 입력과 같은 조건을 확인하지 못했다. 실제 마우스·주 모니터에서의 재발 여부는 추가 확인 대상이다.
+
+획이 release 뒤 남아 있는 renderer 캡처를 검토했고 필기와 도구 막대의 잘림·겹침은 없었다. 기존 15개 앱 시나리오와 패키징 앱의 펜·텍스트·숨김/복귀 검사도 통과했다. 결과물 버전은 **0.2.1**, 패키징 renderer와 현재 소스의 바이트 일치도 확인했다.
+
+### 0.2.2 — 프레임 지연과 다음 획 경계 보완
+
+사용자가 0.2.1에서 개선을 확인했지만 마우스·주 모니터의 빠른 그리기와 Control 삭제 모두에 비슷한 현상이 남았다고 보고했다. 추가로 다음 순서를 VM 회귀검사에서 재현했다.
+
+1. `lostpointercapture(buttons=0) → 한 프레임 경과 → 정상 mouseup`: 0.2.1은 프레임 유예 후 이미 취소하여 정상 release를 버렸다.
+2. `lostpointercapture → 다음 pointerdown → move → mouseup`: 0.2.1은 기존 gesture 때문에 새 down을 무시하여 두 획을 연결했다.
+3. 버튼이 이미 해제되어 release를 기다리는 삭제에서 Control keyup이 오면 정상적인 버튼 선해제까지 취소했다.
+
+capture loss에서 버튼 0을 확인하면 시간 제한으로 취소하지 않고 release 대기로 전환한다. 그 상태에서는 hover 점을 추가하지 않는다. 같은 마우스·같은 버튼의 다음 down은 이전 버튼 해제를 입증하므로 이전 획을 마지막 좌표에서 닫은 뒤 새 획을 시작한다. Control keyup도 이미 버튼이 해제된 대기 상태이면 당시 Control 상태로 삭제를 완료한다. 버튼이 눌린 상태에서 Control을 먼저 놓거나 실제 blur·Escape·pointercancel·숨김이 오면 계속 취소한다. 캡처 상실이나 시간 경과만으로 임의 확정하지 않는다.
+
+- Node **69개 통과**. 포인터 수명주기 26개에는 새 핵심 순서 4개와 실제 취소·다른 포인터 불간섭이 포함된다.
+- 기존 실제 앱 시나리오 **15개 통과**.
+- 소스·0.2.2 번들에서 빠른 입력 검사 **각 4개 통과**. 두 프레임 이상 release를 보류하고 100회 연속 시작해도 100개 획이 분리되며 정상 삭제되는지 추가 확인했다.
+- 입력 검사 오버레이는 사용자 마우스와 섞이지 않도록 화면 밖에 배치하고 webContents에만 이벤트를 전달한다. 실제 바탕화면 합성 검증을 대신하지 않는다.
+- 0.2.2 `.app`·DMG 빌드, 번들의 펜·텍스트·숨김/복귀 검사 통과. 사용자 설정으로 0.2.2를 재실행했다. 사용자는 0.2.2 실행 후 “괜찮아 진듯?”이라고 개선을 확인하고 푸시를 요청했다. 장시간 무재발이나 모든 입력 조건의 완료 확인으로 확대하지 않는다.
+
+실제 사용자 입력의 로컬 진단에서도 네이티브 `mouseUp`이 기록되었으나 renderer에는 확정 `pointerup` 없이 버튼 0의 capture loss가 먼저 기록된 사례가 있었다. 당시 창과 document 포커스는 유지됐다. 따라서 적어도 캡처 종료 시점까지 정상 release 확정 경로가 준비되지 않는다는 근거가 생겼다. 이후 이벤트가 늦게 도착했는지 완전히 누락됐는지, Electron/Chromium/입력 장치 중 어디서 처음 발생했는지까지 확정하지는 않는다. 다른 삭제 기록 1건은 Control keyup이 네이티브 mouseUp보다 먼저 도착해 기존의 Control 선해제 취소 규칙이 적용된 사례였다. 원시 진단에는 좌표·텍스트가 없으며 저장소에 포함하지 않는다.
+
+재발 시 추측 대신 실제 취소 사유를 볼 수 있도록 Electron userData의 `input-diagnostics.jsonl`에 제한된 진단을 저장한다. renderer 이벤트 16개·native 이벤트 12개 이내, 최근 보고 32건만 비동기 저장하며 좌표·텍스트·일반 키는 포함하지 않는다. capture loss·pointercancel·blur·Control 상태 해제·capture 실패와 창 포커스·버튼 상태를 기록한다. 진단 경로는 사용 설명이 아닌 로컬 근거이며 외부 전송하지 않는다. 물리 마우스의 원인 이벤트가 아직 확인된 것은 아니다.
+
+### macOS 패키징 실행
+
+- `npm run dist` 성공: `dist/electron/mac-arm64/My Brush.app`, `dist/electron/My Brush-0.2.2-arm64.dmg`.
+- 생성된 `.app`의 실행 파일을 직접 실행해 `app.isPackaged === true`와 `app.asar` 진입점을 확인했다.
+- 패키징 앱에서 두 화면 bounds·최상위 창·기본 전역키 등록, 펜·한글 텍스트·Control+Enter, 숨김·메뉴 재표시 후 장면 유지를 확인했다. renderer 오류는 없었다.
+- ASAR에는 Electron 소스와 package metadata만 포함되고, Python·테스트·진단·사용자 설정은 포함되지 않았다.
+- `mac.identity: null`로 배포용 서명을 생략한 로컬 빌드다. 실행 파일의 linker ad hoc 서명은 배포용 서명·공증 완료를 의미하지 않는다.
+
+### 남은 실제 확인
+
+- macOS 다른 앱 사용 중 물리 Control+Command+Tab의 ON/OFF와 포커스 복귀.
+- 실제 Control+왼쪽 드래그, 실제 한글 IME 조합·후보 선택.
+- 서로 다른 화면 배율·전체 화면 앱·모니터 분리/재연결과 실제 바탕화면 합성.
+- Windows 의존성 설치·NSIS/exe 빌드·실행·전역키·입력·포커스. 이 문서의 macOS 결과는 Windows 결과가 아니다.
+
+## 이전 Python·Qt 기록
+
+아래는 전환 전 기록이다. 당시 54개 검사 및 사용자 물리 전역키 확인은 현재 Electron 앱의 확인으로 재사용하지 않는다. 기록에 나오는 Python 진입점·검사·빌드 파일은 Electron 전환으로 제거했다.
+
+<details>
+<summary>2026-10-15 Python·Qt 구현·검증 이력</summary>
+
 # 데스크톱 앱 구현·검증 기록
 
 검증일: 2026-10-15
@@ -82,3 +200,5 @@ macOS 기본 토글을 물리 **Control+Command+Tab(⌃⌘⇥)**으로 변경했
 - [Qt 입력기 이벤트](https://doc.qt.io/qt-6/qinputmethodevent.html): 텍스트 편집과 조합은 네이티브 Qt 편집기에 맡김.
 - [Windows 전역키](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerhotkey), [이전 창 활성화 제한](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setforegroundwindow): 등록 실패와 포커스 복귀 결과를 처리.
 - [PyInstaller OS별 빌드](https://pyinstaller.org/en/stable/usage.html#supporting-multiple-operating-systems): 각 OS에서 해당 번들을 생성.
+
+</details>

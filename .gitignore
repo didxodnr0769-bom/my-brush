@@ -14,3 +14,7 @@ docs/analysis/screenbrush-usage-patterns.md
 docs/analysis/evidence/screenbrush-usage-evidence.json
 output/native/*.txt
 output/native/*.jsonl
+
+# Electron dependencies and local UI diagnostics
+node_modules/
+output/electron/

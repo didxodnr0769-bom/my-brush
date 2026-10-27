@@ -1,6 +1,6 @@
 # My Brush Agent 지식 허브
 
-2026-10-16 작성. 다른 macOS·Windows 컴퓨터의 Codex가 현재 작업을 이어가기 위한 기록이다. 작업 시작 시 Git 상태와 실제 파일을 다시 확인한다.
+2026-10-27 갱신. 사용자 요청으로 Python·Qt에서 Electron으로 전환한다. 다른 macOS·Windows 컴퓨터에서 이어갈 때 Git 상태, Node.js·npm 버전, 실제 소스와 최신 검증 기록을 다시 확인한다.
 
 ## 읽는 순서
 

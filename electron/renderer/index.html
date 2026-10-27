@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'self'; base-uri 'none'; form-action 'none'"
+    />
+    <title>My Brush</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" id="app">
+      <canvas
+        id="drawing"
+        tabindex="0"
+        aria-label="화면 필기. 펜, 사각형, 텍스트를 사용하고 Control을 누른 채 드래그해 영역을 삭제하세요."
+      ></canvas>
+      <div class="toolbar" id="toolbar" role="toolbar" aria-label="필기 도구">
+        <div class="toolbar-group tools" aria-label="도구 선택">
+          <button
+            class="tool-button"
+            type="button"
+            data-tool="pen"
+            aria-label="펜"
+            aria-pressed="true"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="m15.5 4.5 4 4M4 20l4.7-1 12-12a1.5 1.5 0 0 0 0-2.1l-1.6-1.6a1.5 1.5 0 0 0-2.1 0l-12 12L4 20Z"
+              />
+              <path d="m5 15.3 3.7 3.7" /></svg
+            ><span class="key-hint">B</span>
+          </button>
+          <button
+            class="tool-button"
+            type="button"
+            data-tool="rect"
+            aria-label="사각형"
+            aria-pressed="false"
+          >
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="5" width="16" height="14" rx=".8" /></svg
+            ><span class="key-hint">R</span>
+          </button>
+          <button
+            class="tool-button"
+            type="button"
+            data-tool="text"
+            aria-label="텍스트"
+            aria-pressed="false"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M5 6V4h14v2M12 4v16M8 20h8" /></svg
+            ><span class="key-hint">T</span>
+          </button>
+        </div>
+        <div
+          class="toolbar-group colors"
+          id="colors"
+          aria-label="색상 선택"
+        ></div>
+        <div class="toolbar-group">
+          <label class="field-label" for="widthInput">굵기</label
+          ><input
+            class="width-range"
+            id="widthInput"
+            aria-label="선 굵기"
+            type="range"
+            min="1"
+            max="32"
+            value="4"
+          /><output class="number-output" id="widthOutput" for="widthInput"
+            >4</output
+          >
+        </div>
+        <div class="toolbar-group text-size-group" id="textSizeGroup" hidden>
+          <label class="field-label" for="fontSizeInput">글자</label
+          ><input
+            class="font-number"
+            id="fontSizeInput"
+            aria-label="텍스트 크기"
+            type="number"
+            min="12"
+            max="144"
+            value="28"
+          /><span class="font-unit">px</span>
+        </div>
+        <div class="toolbar-group toolbar-actions">
+          <button
+            class="icon-button"
+            id="settingsButton"
+            type="button"
+            aria-label="단축키 설정"
+            title="단축키 설정"
+          >
+            <svg viewBox="0 0 24 24">
+              <rect x="2.5" y="5.5" width="19" height="13" rx="2" />
+              <path
+                d="M6 9h.5M10 9h.5M14 9h.5M18 9h.5M6 12h.5M10 12h.5M14 12h.5M18 12h.5M7 15h10"
+              />
+            </svg></button
+          ><button class="return-button" id="returnButton" type="button">
+            <svg viewBox="0 0 24 24">
+              <path d="M10 5 3 12l7 7M3 12h12a5 5 0 0 0 5-5" /></svg
+            >필기 끄기
+          </button>
+        </div>
+      </div>
+      <div class="text-editor" id="textEditor" hidden>
+        <textarea
+          id="textInput"
+          aria-label="화면 텍스트 편집"
+          placeholder="텍스트 입력"
+          wrap="off"
+          spellcheck="false"
+        ></textarea>
+        <div class="editor-note">Ctrl+Enter 완료 · Esc 취소</div>
+      </div>
+      <div class="statusbar" id="statusbar" role="status">
+        펜 · Ctrl+드래그로 영역 삭제
+      </div>
+      <div
+        class="registration-error"
+        id="registrationError"
+        role="alert"
+        hidden
+      ></div>
+      <div class="sr-only" id="announcer" aria-live="polite"></div>
+    </main>
+    <dialog
+      id="settingsDialog"
+      aria-labelledby="settingsTitle"
+      aria-describedby="settingsDescription"
+    >
+      <div class="dialog-heading">
+        <div>
+          <h2 id="settingsTitle">단축키 설정</h2>
+          <p id="settingsDescription">
+            조합을 누르고, 손에 맞는 키로 바꿔 보세요.
+          </p>
+        </div>
+        <button
+          class="close-dialog"
+          id="closeSettings"
+          aria-label="설정 취소하고 닫기"
+          type="button"
+        >
+          <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" /></svg>
+        </button>
+      </div>
+      <div class="shortcut-table" id="shortcutTable"></div>
+      <div class="fixed-note">
+        Ctrl+드래그는 영역 삭제로 고정됩니다.<br />Esc 취소 · Enter 줄바꿈 ·
+        Ctrl+Enter 텍스트 완료
+      </div>
+      <p class="shortcut-message" id="shortcutMessage" role="status"></p>
+      <div class="dialog-footer">
+        <span class="scope-note"
+          >토글은 다른 앱 사용 중에도 적용<br />도구 키는 필기 중에만 적용</span
+        >
+        <div class="dialog-buttons">
+          <button id="cancelSettings" type="button">취소</button
+          ><button class="primary" id="saveSettings" type="button">저장</button>
+        </div>
+      </div>
+    </dialog>
+    <script src="../model.cjs"></script>
+    <script src="../preferences.cjs"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

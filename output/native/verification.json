@@ -1,60 +1,271 @@
 {
-  "date": "2026-10-15",
-  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "date": "2026-10-27",
+  "runtime": "Electron",
+  "version": "0.2.2",
+  "electron": "45.0.0",
+  "node": "24.22.1",
+  "platform": "macOS 26.6.2 (25G83)",
   "architecture": "arm64",
-  "python": "3.12.14",
-  "artifact": "dist/MyBrush.app",
-  "binary_sha256": "5b512d1d8b0b99227641ded84cbd942f53046594e4b519af3130b04ba394fe40",
   "unit_tests": {
-    "total": 54,
-    "model": 20,
-    "qt_widgets": 34,
-    "passed": 54,
-    "mode": "QT_QPA_PLATFORM=offscreen"
+    "total": 69,
+    "passed": 69,
+    "geometry": 21,
+    "preferences": 7,
+    "hotkeys": 7,
+    "renderer_state": 6,
+    "pointer_lifecycle": 26,
+    "input_diagnostics": 2
   },
-  "macos_native": {
-    "bundle_launched": true,
-    "signature_verification": "pass (ad hoc local build)",
-    "ui_observed": [
-      "pen drawing",
-      "palette color",
-      "stroke width",
-      "rectangle via pointer",
-      "multiline Korean paste",
-      "existing text resize",
-      "Control+Enter",
-      "shortcut duplicate error and save",
-      "new shortcut dispatch",
-      "hide overlay"
+  "electron_ui": {
+    "date": "2026-10-27",
+    "platform": "darwin",
+    "arch": "arm64",
+    "electron": "45.0.0",
+    "passed": 15,
+    "checks": [
+      "startup: empty scene, isolated renderer, real display bounds and transparent overlay",
+      "pen drawing, color and width apply to subsequent objects",
+      "rectangle tool and hollow interior exclusion",
+      "multiline Korean text, Control+Enter, resize existing text and cancel edit",
+      "partial border selection deletes the whole rectangle",
+      "Control release and Escape cancel deletion gestures",
+      "text input preserves tool letters, external click consumes the commit",
+      "shortcut duplicate validation, record cancellation and saved tool dispatch",
+      "a modal on one display blocks drawing and global toggle from other displays",
+      "composition guard blocks tools and toggle (synthetic events, not an IME claim)",
+      "OS shortcut collision keeps existing binding and successful replacement persists",
+      "hide/show retains completed objects and OFF survives app activation",
+      "hide mid-drag cancels unfinished pen before pointer release",
+      "mixed-object selection removes each whole object",
+      "restart restores preferences and starts with an empty session"
     ],
-    "hotkey_registration_and_collision": "pass",
-    "own_process_carbon_to_qt_delivery": "pass",
-    "physical_control_drag": "not verified",
-    "physical_global_hotkey_from_other_app": "pass (user confirmed on macOS, 2026-10-15)",
-    "real_ime": "not verified",
-    "toggle": {
-      "binding": "Control+Command+Tab",
-      "preference_saved": true,
-      "off_persists_across_activation": "pass (Qt regression)",
-      "bundled_ui_binding_and_off_button": "observed",
-      "running_app_registration": "confirmed by exclusive collision",
-      "physical_keyboard_round_trip": "pass (user confirmed ON then OFF from another app, 2026-10-15)"
-    }
+    "errors": [],
+    "physicalGlobalKeyboard": "not verified",
+    "realIME": "not verified",
+    "windows": "not verified"
+  },
+  "macos_bundle": {
+    "built": true,
+    "launched": true,
+    "displays": [
+      {
+        "bounds": {
+          "x": -1920,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "display": {
+          "x": -1920,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "visible": true,
+        "top": true
+      },
+      {
+        "bounds": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "display": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "visible": true,
+        "top": true
+      }
+    ],
+    "checks": [
+      "packaged ASAR entry",
+      "display bounds and always-on-top",
+      "global shortcut registered",
+      "pen",
+      "Korean text and Control+Enter",
+      "hide/show and session preservation"
+    ],
+    "errors": [],
+    "signing": "distribution signing skipped (identity null); not notarized",
+    "version": "0.2.2"
   },
   "windows": {
-    "source_and_scripts": true,
+    "scripts_and_build_config": true,
     "binary_built": false,
     "runtime_verified": false
   },
+  "physical_global_hotkey": "not verified for Electron",
+  "physical_control_drag": "not verified for Electron",
+  "real_ime": "not verified for Electron",
+  "desktop_compositing_visual": "not verified outside renderer capture",
+  "artifacts_sha256": {
+    "dist/electron/mac-arm64/My Brush.app/Contents/Resources/app.asar": "a823f3eaefa39f16488562a72c5236e6d9769d4e52f1b420f17ee9b32fb08a86",
+    "dist/electron/My Brush-0.2.2-arm64.dmg": "a820312258566aeaff3bb0ecb4931f550b6387dcfa71435f603098f67388624b"
+  },
   "source_sha256": {
-    "desktop_main.py": "c4311322e3841ee2438678f7f145c568443d2c1ae1112672b8f93906a034121a",
-    "my_brush/__init__.py": "16a4c90fd2758d91d80a7b595d432e463aff48ada4e2a637701714b40bf1bccf",
-    "my_brush/app.py": "987aa983d8fc2ffe12e0164f267b55f7078d777545ba615f92b8578cbc842425",
-    "my_brush/model.py": "c6a2c68a09ac73d12671a6dae450eae4e5df2da2f04a97963ac9809284b1e2dc",
-    "my_brush/platform.py": "05cf242701c95f8bebe7b097ffd56c137196f2c18bf9d9d420e3a8527431fc1d",
-    "my_brush/preferences.py": "a54e1be9d4780fa67285c8d071977f71b69632fc1ef309048fea00a865d06b9c",
-    "scripts/build.py": "c88199375a00888d06fd3f7469360d1153f94a0d2f2541d69102628e35cdfc51",
-    "requirements.txt": "e16dff7f823f0121441ae1e78e9b50b706a2635dfbbe7244e03d4395a11c067c",
-    "requirements-build.txt": "e1ffd8537aef74381c9cec6c739efe57275c0e859058932fa910975fab9088b3"
+    "electron/preload.cjs": "0fa53889e847546a50dbe1257169e677f8be67346ec18112d4acc3e90d8a498e",
+    "electron/hotkeys.cjs": "74565c0814d0776e514a11c256ffa0b404cd80c75014ba6db053eb77d2e90f6d",
+    "electron/preferences.cjs": "f8ab536e78132e247b1006dbd4dc75ddded9aab13ce3684488cbbe2350226516",
+    "electron/main.cjs": "247dd2cf6752e538ba6c4c410a0076cd69d7e8c1141d79aaf9a9fdab00276fe8",
+    "electron/input-diagnostics.cjs": "65323c28a8ca5316eb8d3d4775037293dcf260bc8780921fe70cc41e2c235e5f",
+    "electron/model.cjs": "5022481a5b51653f256c0a77ea78d80a3447e767f5421baae3a421f9bbc3fbe7",
+    "electron/renderer/index.html": "126f00cf065d7a1ff30f4c75b1c705129f1acc318c60bc190d44aeccc385b5c9",
+    "electron/renderer/styles.css": "db88aa418af3e55b096ebe0944cc28e0888e23a8d01e0f160bb58f1179b20bd5",
+    "electron/renderer/app.js": "10f5c80c8306f8a934075f8dc5c0c0dbfcd15bde5e61494753628f668da38009"
+  },
+  "previous_qt_verification": {
+    "date": "2026-10-15",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "architecture": "arm64",
+    "python": "3.12.14",
+    "artifact": "dist/MyBrush.app",
+    "binary_sha256": "5b512d1d8b0b99227641ded84cbd942f53046594e4b519af3130b04ba394fe40",
+    "unit_tests": {
+      "total": 54,
+      "model": 20,
+      "qt_widgets": 34,
+      "passed": 54,
+      "mode": "QT_QPA_PLATFORM=offscreen"
+    },
+    "macos_native": {
+      "bundle_launched": true,
+      "signature_verification": "pass (ad hoc local build)",
+      "ui_observed": [
+        "pen drawing",
+        "palette color",
+        "stroke width",
+        "rectangle via pointer",
+        "multiline Korean paste",
+        "existing text resize",
+        "Control+Enter",
+        "shortcut duplicate error and save",
+        "new shortcut dispatch",
+        "hide overlay"
+      ],
+      "hotkey_registration_and_collision": "pass",
+      "own_process_carbon_to_qt_delivery": "pass",
+      "physical_control_drag": "not verified",
+      "physical_global_hotkey_from_other_app": "pass (user confirmed on macOS, 2026-10-15)",
+      "real_ime": "not verified",
+      "toggle": {
+        "binding": "Control+Command+Tab",
+        "preference_saved": true,
+        "off_persists_across_activation": "pass (Qt regression)",
+        "bundled_ui_binding_and_off_button": "observed",
+        "running_app_registration": "confirmed by exclusive collision",
+        "physical_keyboard_round_trip": "pass (user confirmed ON then OFF from another app, 2026-10-15)"
+      }
+    },
+    "windows": {
+      "source_and_scripts": true,
+      "binary_built": false,
+      "runtime_verified": false
+    },
+    "source_sha256": {
+      "desktop_main.py": "c4311322e3841ee2438678f7f145c568443d2c1ae1112672b8f93906a034121a",
+      "my_brush/__init__.py": "16a4c90fd2758d91d80a7b595d432e463aff48ada4e2a637701714b40bf1bccf",
+      "my_brush/app.py": "987aa983d8fc2ffe12e0164f267b55f7078d777545ba615f92b8578cbc842425",
+      "my_brush/model.py": "c6a2c68a09ac73d12671a6dae450eae4e5df2da2f04a97963ac9809284b1e2dc",
+      "my_brush/platform.py": "05cf242701c95f8bebe7b097ffd56c137196f2c18bf9d9d420e3a8527431fc1d",
+      "my_brush/preferences.py": "a54e1be9d4780fa67285c8d071977f71b69632fc1ef309048fea00a865d06b9c",
+      "scripts/build.py": "c88199375a00888d06fd3f7469360d1153f94a0d2f2541d69102628e35cdfc51",
+      "requirements.txt": "e16dff7f823f0121441ae1e78e9b50b706a2635dfbbe7244e03d4395a11c067c",
+      "requirements-build.txt": "e1ffd8537aef74381c9cec6c739efe57275c0e859058932fa910975fab9088b3"
+    }
+  },
+  "pointer_fix": {
+    "user_conditions": "mouse, primary monitor; more frequent with fast gestures",
+    "physical_root_cause": "not reproduced; controlled delivery-fault recovery verified",
+    "unit_regressions": 18,
+    "native_source": {
+      "date": "2026-10-27",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packaged": false,
+      "passed": 3,
+      "checks": [
+        "100 rapid native mouse strokes survive release and Ctrl-drag deletes them",
+        "Control key remains held while macOS pointer modifier flags disappear",
+        "100 strokes and Ctrl deletion recover when pointerup handler delivery is suppressed"
+      ],
+      "errors": [],
+      "physicalMouseRootCause": "not reproduced; native input and controlled delivery faults verified"
+    },
+    "native_bundle": {
+      "date": "2026-10-27",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packaged": true,
+      "passed": 3,
+      "checks": [
+        "100 rapid native mouse strokes survive release and Ctrl-drag deletes them",
+        "Control key remains held while macOS pointer modifier flags disappear",
+        "100 strokes and Ctrl deletion recover when pointerup handler delivery is suppressed"
+      ],
+      "errors": [],
+      "physicalMouseRootCause": "not reproduced; native input and controlled delivery faults verified"
+    },
+    "filtered_pointerup_comparison": {
+      "baseline_0_2_0_retained": 0,
+      "fixed_0_2_1_retained": 100,
+      "attempted_strokes": 100
+    },
+    "normal_rapid_input_baseline": "100 strokes passed before fix too",
+    "version": "0.2.1"
+  },
+  "release_boundary_fix": {
+    "version": "0.2.2",
+    "user_feedback": "0.2.1 improved but both pen and deletion still intermittently fail on mouse/primary monitor",
+    "physical_root_cause": "native mouseUp observed before renderer capture-loss without pointerup finalization; lower-level omission versus delayed delivery unresolved",
+    "native_source": {
+      "date": "2026-10-27",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packaged": false,
+      "passed": 4,
+      "checks": [
+        "100 rapid native mouse strokes survive release and Ctrl-drag deletes them",
+        "Control key remains held while macOS pointer modifier flags disappear",
+        "100 strokes and Ctrl deletion recover when pointerup handler delivery is suppressed",
+        "delayed release across frames and 100 rapid next presses keep strokes separate"
+      ],
+      "errors": [],
+      "physicalMouseRootCause": "not reproduced; native input and controlled delivery faults verified"
+    },
+    "native_bundle": {
+      "date": "2026-10-27",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packaged": true,
+      "passed": 4,
+      "checks": [
+        "100 rapid native mouse strokes survive release and Ctrl-drag deletes them",
+        "Control key remains held while macOS pointer modifier flags disappear",
+        "100 strokes and Ctrl deletion recover when pointerup handler delivery is suppressed",
+        "delayed release across frames and 100 rapid next presses keep strokes separate"
+      ],
+      "errors": [],
+      "physicalMouseRootCause": "not reproduced; native input and controlled delivery faults verified"
+    },
+    "diagnostics": {
+      "file": "Electron userData/input-diagnostics.jsonl",
+      "max_reports": 32,
+      "renderer_events": 16,
+      "native_events": 12,
+      "coordinates": false,
+      "text": false,
+      "general_keys": false
+    },
+    "user_feedback_after": "User reported apparent improvement with 0.2.2 and requested push; long-term absence of recurrence not claimed",
+    "observed_input": {
+      "native_mouseup": true,
+      "renderer_pointerup_before_capture_loss": false,
+      "focus_retained": true,
+      "control_before_mouse_release_case": "observed and intentionally canceled by fixed-input rule"
+    }
   }
 }

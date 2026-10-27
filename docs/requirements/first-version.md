@@ -85,4 +85,4 @@ REQ-07의 삭제 조건은 사용자 답변으로 **일부라도 겹치면 오�
 - [도구 막대와 입력 설계](../design/interaction-design.md)
 - [브라우저 시안](../../preview/index.html)
 
-기존 제품의 근거는 분석 문서가, **현재 개발 범위와 사용자 결정은 이 문서가** 관리한다. Computer History에서 관찰된 빈도가 사용자 선택을 대체하지 않는다. 데스크톱 구현은 Python·Qt Widgets로 진행하며, 실행 결과와 OS별 미검증 항목은 [데스크톱 검증 기록](../design/native-verification.md)에서 관리한다.
+기존 제품의 근거는 분석 문서가, **현재 개발 범위와 사용자 결정은 이 문서가** 관리한다. Computer History에서 관찰된 빈도가 사용자 선택을 대체하지 않는다. 2026-10-27 사용자 요청에 따라 데스크톱 구현을 Electron으로 전환한다. 위 7개 기능 범위는 유지하며, 실행 결과와 OS별 미검증 항목은 [데스크톱 검증 기록](../design/native-verification.md)에서 관리한다.
