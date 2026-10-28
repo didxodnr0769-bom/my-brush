@@ -267,5 +267,46 @@
       "focus_retained": true,
       "control_before_mouse_release_case": "observed and intentionally canceled by fixed-input rule"
     }
+  },
+  "publication_review": {
+    "date": "2026-10-28",
+    "date_basis": "Asia/Seoul client date",
+    "source_revision": "26186b3",
+    "version": "0.2.2",
+    "platform": "macOS 26.6.2 (25G83)",
+    "architecture": "arm64",
+    "node": "24.22.1",
+    "unit_passed": 69,
+    "electron_ui_passed": 15,
+    "pointer_source_passed": 4,
+    "pointer_bundle_passed": 4,
+    "dependency_audit": {
+      "dependencies": 285,
+      "known_vulnerabilities": 0
+    },
+    "confirmed_issues": [
+      {
+        "id": "TEXT-EDGE-001",
+        "severity": "P2",
+        "status": "open",
+        "summary": "Text editor position is clamped but committed text keeps the original edge click coordinates.",
+        "reproduced_in": [
+          "renderer VM fixture",
+          "packaged macOS 0.2.2"
+        ]
+      }
+    ],
+    "source_changed": false,
+    "bundle_rebuilt": false,
+    "screenshots": [
+      "docs/images/overview.png",
+      "docs/images/area-delete.png",
+      "docs/images/shortcuts.png"
+    ],
+    "screenshot_method": "packaged renderer capture; crop and flatten transparency onto neutral background",
+    "physical_global_keyboard": "not verified in this review",
+    "real_ime": "not verified",
+    "windows": "not verified",
+    "details": "docs/design/native-verification.md"
   }
 }

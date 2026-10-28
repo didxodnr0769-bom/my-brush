@@ -72,3 +72,10 @@ Node.js 22.12 이상이 필요하며 정확한 조건은 `package.json`의 `engi
 - native pointer 검사 창은 사용자 마우스 혼입을 막기 위해 화면 밖에서 webContents 입력을 받는다. 레이아웃·실제 바탕화면 합성 검증과 구분한다.
 
 - 0.2.2 실사용 로그에서는 native mouseUp은 있으나 renderer 확정 전 capture loss가 나온 사례를 확인했다(창/document focus 유지). 늦은 전달인지 완전 누락인지와 Electron/OS 내부 근원은 미확정이다. 사용자는 개선을 체감하고 푸시를 요청했으며 장기 무재발로 확대하지 않는다. 진단 원시 파일은 커밋하지 않는다.
+
+## 공유 전 점검과 문서 구조 (2026-10-28)
+
+- `README.md`는 앱 소개 중심이다. 조작·저장 데이터는 `docs/guide/usage.md`, 설치·검사·빌드는 `docs/development.md`가 담당한다.
+- 미해결 문제와 최신 실행 근거는 `docs/design/native-verification.md`와 `output/native/verification.json`을 따른다. 상세 공유 점검 파일 `docs/release/readiness.md`는 사용자 요청으로 `.gitignore`로 추적에서 제외하며 로컬에만 유지한다. 이번에는 제품 코드를 수정하지 않았다.
+- P2 `TEXT-EDGE-001`: `syncEditor()`는 편집기 표시만 보정하고 `commitText()`는 원래 클릭 좌표로 확정한다. 화면 오른쪽·아래 가장자리 텍스트가 잘리며 VM과 0.2.2 번들에서 재현했다. 다음 수정 때 신규 텍스트 좌표와 기존 편집 좌표 보존을 함께 검토한다.
+- 문서 캡처는 실제 0.2.2 번들의 앱 레이어를 촬영하고 투명 부분에 단색 배경을 합친 것이다. 사용자 피드백을 반영해 대표·삭제 예시는 텍스트 없이 굵기가 다른 브러시 곡선과 강조선으로 재촬영했다. 바탕화면 합성 검증으로 확대하지 않는다. 원시 결과·개인 화면은 공개 이미지에 넣지 않는다.

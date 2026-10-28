@@ -18,3 +18,6 @@ output/native/*.jsonl
 # Electron dependencies and local UI diagnostics
 node_modules/
 output/electron/
+
+# Local pre-publication review
+docs/release/readiness.md

@@ -13,7 +13,9 @@
 - 제품 범위: `docs/requirements/first-version.md`
 - 입력·도구 설계: `docs/design/interaction-design.md`
 - 실행 검증과 남은 항목: `docs/design/native-verification.md`, `output/native/verification.json`
-- 일반 설치·조작·빌드 안내: `README.md`
+- 앱 소개: `README.md`
+- 일반 조작·저장 데이터: `docs/guide/usage.md`
+- 설치·검사·빌드 안내: `docs/development.md`
 - 기존 제품 조사: `docs/analysis/screenbrush-features.md`, `docs/analysis/screenbrush-feature-selection.csv`
 
 제품 규칙과 검증 결과는 위 문서가 담당한다. 이 트리에는 다음 Agent의 판단에 필요한 맥락·함정·작업 순서만 남긴다. 저장소를 clone하면 이 기록도 함께 받는다. 전역 Codex 메모리나 Obsidian 동기화는 사용하지 않는다.
